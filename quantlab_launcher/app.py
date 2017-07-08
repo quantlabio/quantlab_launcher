@@ -1,5 +1,5 @@
 # coding: utf-8
-"""Jupyter Lab Launcher"""
+"""Jupyter QuantLab Launcher"""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -11,7 +11,7 @@ from .handlers import add_handlers, LabConfig
 
 class LabLauncherApp(NotebookApp):
 
-    default_url = Unicode('/lab',
+    default_url = Unicode('/quatlab',
         help="The default URL to redirect to from `/`")
 
     lab_config = LabConfig()

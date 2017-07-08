@@ -1,5 +1,5 @@
 # coding: utf-8
-"""Jupyter Lab Launcher handlers"""
+"""Jupyter QuantLab Launcher handlers"""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -22,7 +22,7 @@ FILE_LOADER = FileSystemLoader(HERE)
 
 
 class LabHandler(IPythonHandler):
-    """Render the JupyterLab View."""
+    """Render the QuantLab View."""
 
     def initialize(self, lab_config):
         self.lab_config = lab_config
@@ -119,10 +119,10 @@ class LabConfig(HasTraits):
     namespace = Unicode('',
         help='The namespace for the application')
 
-    page_title = Unicode('JupyterLab',
+    page_title = Unicode('QuantLab',
         help='The page title for the application')
 
-    page_url = Unicode('/lab',
+    page_url = Unicode('/quantlab',
         help='The url for the application')
 
     dev_mode = Bool(False,
@@ -140,9 +140,9 @@ def add_handlers(web_app, config):
     with open(package_file) as fid:
         data = json.load(fid)
 
-    config.version = (config.version or data['jupyterlab']['version'] or
+    config.version = (config.version or data['quantlab']['version'] or
                       data['version'])
-    config.name = config.name or data['jupyterlab']['name']
+    config.name = config.name or data['quantlab']['name']
 
     handlers = [
         (url + r'/?', LabHandler, {
@@ -155,9 +155,9 @@ def add_handlers(web_app, config):
     ]
 
     # Backward compatibility.
-    if 'publicPath' in data['jupyterlab']:
+    if 'publicPath' in data['quantlab']:
         handlers.append(
-            (data['jupyterlab']['publicPath'] + r"/(.*)", FileFindHandler, {
+            (data['quantlab']['publicPath'] + r"/(.*)", FileFindHandler, {
                 'path': assets_dir
             })
         )
