@@ -7,5 +7,5 @@ install:
     - pip install setuptools pip --upgrade
     - pip install -e .
 script:
-    - cd 
-    - python -c "import jupyterlab_launcher"
+    - cd
+    - python -c "import quantlab_launcher"

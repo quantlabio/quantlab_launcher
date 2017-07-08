@@ -13,20 +13,20 @@ from setupbase import (
 
 
 setup_args = dict(
-    name            = 'jupyterlab_launcher',
+    name            = 'quantlab_launcher',
     version         = __version__,
     packages        = find_packages('.'),
-    package_data    = { 'jupyterlab_launcher': ['*.html'] },
+    package_data    = { 'quantlab_launcher': ['*.html'] },
     description     = "Jupyter Launcher",
     long_description= """
-    This package is used to launch an application built using JupyterLab
+    This package is used to launch an application built using QuantLab
     """,
     author          = 'Jupyter Development Team',
     author_email    = 'jupyter@googlegroups.com',
     url             = 'http://jupyter.org',
     license         = 'BSD',
     platforms       = "Linux, Mac OS X, Windows",
-    keywords        = ['Jupyter', 'JupyterLab'],
+    keywords        = ['Jupyter', 'QuantLab'],
     cmdclass        = create_cmdclass(),
     classifiers     = [
         'Intended Audience :: Developers',
