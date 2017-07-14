@@ -6,19 +6,19 @@
 from notebook.notebookapp import NotebookApp
 from traitlets import Unicode
 
-from .handlers import add_handlers, LabConfig
+from .handlers import add_handlers, QuantLabConfig
 
 
-class LabLauncherApp(NotebookApp):
+class QuantLabLauncherApp(NotebookApp):
 
     default_url = Unicode('/quatlab',
         help="The default URL to redirect to from `/`")
 
-    lab_config = LabConfig()
+    quantlab_config = QuantLabConfig()
 
     def start(self):
-        add_handlers(self.web_app, self.lab_config)
+        add_handlers(self.web_app, self.quantlab_config)
         super.start()
 
 
-main = LabLauncherApp.launch_instance
+main = QuantLabLauncherApp.launch_instance

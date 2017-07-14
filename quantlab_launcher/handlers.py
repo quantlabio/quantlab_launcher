@@ -21,15 +21,15 @@ HERE = os.path.dirname(__file__)
 FILE_LOADER = FileSystemLoader(HERE)
 
 
-class LabHandler(IPythonHandler):
+class QuantLabHandler(IPythonHandler):
     """Render the QuantLab View."""
 
-    def initialize(self, lab_config):
-        self.lab_config = lab_config
+    def initialize(self, quantlab_config):
+        self.quantlab_config = quantlab_config
 
     @web.authenticated
     def get(self):
-        config = self.lab_config
+        config = self.quantlab_config
         settings_dir = config.settings_dir
         page_config_file = os.path.join(settings_dir, 'page_config.json')
         assets_dir = config.assets_dir
@@ -101,8 +101,8 @@ class LabHandler(IPythonHandler):
         return FILE_LOADER.load(self.settings['jinja2_env'], name)
 
 
-class LabConfig(HasTraits):
-    """The lab application configuration object.
+class QuantLabConfig(HasTraits):
+    """The quantlab application configuration object.
     """
     settings_dir = Unicode('',
         help='The settings directory')
@@ -145,8 +145,8 @@ def add_handlers(web_app, config):
     config.name = config.name or data['quantlab']['name']
 
     handlers = [
-        (url + r'/?', LabHandler, {
-            'lab_config': config
+        (url + r'/?', QuantLabHandler, {
+            'quantlab_config': config
         }),
         (url + r"/(.*)", FileFindHandler, {
             'path': assets_dir
