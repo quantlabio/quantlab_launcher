@@ -34,6 +34,7 @@ class QuantLabHandler(IPythonHandler):
         self.quantlab_config = quantlab_config
 
     @web.authenticated
+    @web.removeslash
     def get(self):
         config = self.quantlab_config
         settings_dir = config.settings_dir
@@ -176,7 +177,8 @@ def add_handlers(web_app, config):
     if config.assets_dir and not config.static_url:
         config.static_url = ujoin(base_url, default_static_path)
         handlers.append((config.static_url + "(.*)", FileFindHandler, {
-            'path': config.assets_dir
+            'path': config.assets_dir,
+            'no_cache_paths': ['/']  # don't cache anything
         }))
 
         package_file = os.path.join(config.assets_dir, 'package.json')
