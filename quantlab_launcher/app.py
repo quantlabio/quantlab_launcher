@@ -18,7 +18,7 @@ class QuantLabLauncherApp(NotebookApp):
 
     def start(self):
         add_handlers(self.web_app, self.quantlab_config)
-        super.start()
+        NotebookApp.start(self)
 
 
 main = QuantLabLauncherApp.launch_instance
