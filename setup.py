@@ -21,9 +21,9 @@ setup_args = dict(
     long_description= """
     This package is used to launch an application built using QuantLab
     """,
-    author          = 'Jupyter Development Team',
-    author_email    = 'jupyter@googlegroups.com',
-    url             = 'http://jupyter.org',
+    author          = 'QuantLab Development Team',
+    author_email    = 'quantlab.io@gmail.com',
+    url             = 'https://www.quantlab.io',
     license         = 'BSD',
     platforms       = "Linux, Mac OS X, Windows",
     keywords        = ['Jupyter', 'QuantLab'],
