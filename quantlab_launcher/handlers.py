@@ -13,6 +13,7 @@ from notebook.utils import url_path_join as ujoin
 from traitlets import HasTraits, Unicode, Bool, List
 
 from .settings_handler import SettingsHandler
+from .ext_handler import FileExtHandler
 
 #-----------------------------------------------------------------------------
 # Module globals
@@ -25,6 +26,7 @@ FILE_LOADER = FileSystemLoader(HERE)
 default_static_path = r'quantlab/static/'
 default_settings_path = r'quantlab/api/settings/'
 default_themes_path = r'/quantlab/api/themes/'
+ext_contents_path = r'/quantlab/api/contents';
 
 
 class QuantLabHandler(IPythonHandler):
@@ -41,7 +43,6 @@ class QuantLabHandler(IPythonHandler):
         page_config_file = os.path.join(settings_dir, 'page_config.json')
         assets_dir = config.assets_dir
 
-        base_url = self.settings['base_url']
         js_files = set(config.static_js_urls)
         css_files = set(config.static_css_urls)
 
@@ -55,10 +56,9 @@ class QuantLabHandler(IPythonHandler):
                     js_files.add(ujoin(config.static_url, bundle_file))
 
         if not js_files:
-            msg = ('%s build artifacts not detected in "%s".\n' +
-                   'Please see README for build instructions.')
+            msg = '%s assets not found in "%s"'
             msg = msg % (config.name, config.assets_dir)
-            self.log.error(msg)
+            self.log.error(config.error_message or msg)
             self.write(self.render_template('error.html',
                        status_code=500,
                        status_message='%s Error' % config.name,
@@ -77,7 +77,7 @@ class QuantLabHandler(IPythonHandler):
         page_config.setdefault('appNamespace', config.namespace)
         page_config.setdefault('devMode', config.dev_mode)
         page_config.setdefault('settingsPath', config.settings_url)
-        page_config.setdefault('themePath', config.themes_url);
+        page_config.setdefault('themePath', config.themes_url)
         page_config.setdefault(
             'settingsDir', config.settings_dir.replace(os.sep, '/')
         )
@@ -127,6 +127,9 @@ class QuantLabConfig(HasTraits):
 
     namespace = Unicode('',
         help='The namespace for the application')
+
+    error_message = Unicode('',
+        help='The error message to show when assets are not detected')
 
     page_title = Unicode('QuantLab',
         help='The page title for the application')
@@ -182,17 +185,20 @@ def add_handlers(web_app, config):
         }))
 
         package_file = os.path.join(config.assets_dir, 'package.json')
-        with open(package_file) as fid:
-            data = json.load(fid)
+        if os.path.exists(package_file):
+            with open(package_file) as fid:
+                data = json.load(fid)
 
-        config.version = (config.version or data['quantlab']['version'] or
-                          data['version'])
-        config.name = config.name or data['quantlab']['name']
+            config.version = (
+                config.version or data['quantlab']['version'] or
+                data['version']
+            )
+            config.name = config.name or data['quantlab']['name']
 
     # Handle the settings.
     if config.schemas_dir and not config.settings_url:
         config.settings_url = ujoin(base_url, default_settings_path)
-        settings_path = config.settings_url + '(?P<section_name>[\w.-]+)'
+        settings_path = config.settings_url + '(?P<section_name>.+)'
         handlers.append((settings_path, SettingsHandler, {
             'schemas_dir': config.schemas_dir,
             'settings_dir': config.user_settings_dir
@@ -202,7 +208,16 @@ def add_handlers(web_app, config):
     if config.themes_dir and not config.themes_url:
         config.themes_url = ujoin(base_url, default_themes_path)
         handlers.append((ujoin(config.themes_url, "(.*)"), FileFindHandler, {
-            'path': config.themes_dir
+            'path': config.themes_dir,
+            'no_cache_paths': ['/']  # don't cache anything
         }))
+
+    # Handle ext file extensions
+    extfile_url = ujoin(base_url, ext_contents_path)
+    handlers.append((ujoin(extfile_url, "(.*)"), FileExtHandler, {
+        'path': extfile_url
+    }))
+
+    config.name = config.name or 'Application'
 
     web_app.add_handlers(".*$", handlers)
