@@ -14,7 +14,7 @@ class SettingsAPI(APITester):
         return self._req('GET', section_name)
 
     def patch(self, section_name, body):
-        return self._req('PATCH', section_name, json.dumps(body))
+        return self._req('PUT', section_name, json.dumps(body))
 
 
 class SettingsAPITest(LabTestBase):
@@ -23,12 +23,19 @@ class SettingsAPITest(LabTestBase):
     def setUp(self):
         self.settings_api = SettingsAPI(self.request)
 
-    def test_get(self):
+    def test_new_get(self):
+        id = '@quantlab/apputils-extension:themes'
+        data = self.settings_api.get(id).json()
+        assert data['id'] == id
+        assert len(data['schema'])
+        assert 'raw' in data
+
+    def test_old_get(self):
         id = 'jupyter.extensions.shortcuts'
         data = self.settings_api.get(id).json()
         assert data['id'] == id
         assert len(data['schema'])
-        assert 'data' in data
+        assert 'raw' in data
 
     def test_get_bad(self):
         with assert_http_error(404):
